@@ -56,13 +56,13 @@ try: print(json.load(sys.stdin)['accounts'][0]['id'])
 except: pass
 ")
 
-CF_TOKEN=$(cat ~/.wrangler/config/default.toml 2>/dev/null | python3 -c "
-import sys
-for line in sys.stdin:
-  if 'token' in line and '=' in line:
-    print(line.split('=')[1].strip().strip('\"'))
-    break
-" 2>/dev/null)
+# Use CLOUDFLARE_API_TOKEN env var (set by setup-auth or wrangler login)
+CF_TOKEN="${CLOUDFLARE_API_TOKEN:-$(wrangler whoami --json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('api_token',''))" 2>/dev/null)}"
+if [ -z "$CF_TOKEN" ]; then
+  echo "⚠ CLOUDFLARE_API_TOKEN not set. Set it in your environment or run: wrangler login"
+  echo "  Then export CLOUDFLARE_API_TOKEN=<your-token>"
+  exit 1
+fi
 
 curl -s -X PATCH \
   "https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/pages/projects/$PROJECT_NAME" \
@@ -102,8 +102,10 @@ wrangler deploy
 
 ### 4. Get worker URL
 ```bash
-WORKER_NAME=$(cat wrangler.toml | grep '^name' | cut -d'"' -f2)
-CF_URL="https://$WORKER_NAME.<account-subdomain>.workers.dev"
+CF_URL=$(wrangler deploy 2>&1 | grep -oP 'https://[^\s]+\.workers\.dev' | head -1)
+if [ -z "$CF_URL" ]; then
+  echo "⚠ Could not extract worker URL from deploy output. Check https://dash.cloudflare.com"
+fi
 echo "✓ Worker deployed: $CF_URL"
 ```
 
@@ -117,9 +119,15 @@ cat >> DEPLOYMENT_DOCS/DEPLOYED_ENV.md << EOF
 CF_URL=$CF_URL
 CF_PROJECT_NAME=$PROJECT_NAME
 EOF
+chmod 600 DEPLOYMENT_DOCS/DEPLOYED_ENV.md 2>/dev/null || true
 ```
 
 Export: `CF_URL` for CI/CD setup and env var wiring.
+
+## Free Tier Notes
+- **Cloudflare Pages**: unlimited requests, 500 builds/month
+- **Cloudflare Workers**: 10 million requests/month, 10ms CPU time per request
+- Both are genuinely free with no credit card required for these limits
 
 ## On Failure
 - Pages deploy fails: verify the output directory exists and has an `index.html`

@@ -88,9 +88,16 @@ cat >> DEPLOYMENT_DOCS/DEPLOYED_ENV.md << EOF
 NETLIFY_URL=$NETLIFY_URL
 NETLIFY_SITE_ID=$NETLIFY_SITE_ID
 EOF
+chmod 600 DEPLOYMENT_DOCS/DEPLOYED_ENV.md 2>/dev/null || true
 ```
 
 Export: `NETLIFY_URL`, `NETLIFY_SITE_ID` for CI/CD setup.
+
+## Free Tier Notes
+- **Bandwidth**: 100GB/month
+- **Function invocations**: 125,000/month
+- **Build minutes**: 300/month
+- Suitable for most personal and small team projects
 
 ## On Failure
 - Build fails: check build command, run `npm run build` locally first

@@ -34,7 +34,7 @@ echo "Response: $RESPONSE"
 REDIS_ENDPOINT=$(echo $RESPONSE | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('endpoint',''))")
 REDIS_PORT=$(echo $RESPONSE | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('port','6380'))")
 REDIS_PASSWORD=$(echo $RESPONSE | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('password',''))")
-UPSTASH_REDIS_REST_URL=$(echo $RESPONSE | python3 -c "import sys,json; d=json.load(sys.stdin); print('https://'+d.get('endpoint',''))")
+UPSTASH_REDIS_REST_URL=$(echo $RESPONSE | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('rest_url', 'https://'+d.get('endpoint','')))")
 UPSTASH_REDIS_REST_TOKEN=$(echo $RESPONSE | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('rest_token',''))")
 
 REDIS_URL="rediss://:${REDIS_PASSWORD}@${REDIS_ENDPOINT}:${REDIS_PORT}"
