@@ -1,0 +1,4 @@
+DEPLOYMENT_DOCS/DEPLOYED_ENV.md
+node_modules/
+.env
+.env.local

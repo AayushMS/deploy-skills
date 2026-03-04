@@ -1,0 +1,9 @@
+{
+  "name": "deploy-skills",
+  "version": "0.1.0",
+  "description": "One-shot deployment of any project to free cloud infrastructure. Scans your codebase, authenticates required tools, deploys every service, wires environment variables, sets up CI/CD, and verifies everything is live.",
+  "author": {
+    "name": "aayushms"
+  },
+  "keywords": ["deployment", "vercel", "netlify", "cloudflare", "render", "supabase", "neon", "upstash", "cicd", "infrastructure"]
+}
