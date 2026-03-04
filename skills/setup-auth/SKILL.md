@@ -264,6 +264,7 @@ mkdir -p ~/.render
 cat > ~/.render/config.yaml << EOF
 apiKey: <pasted_key>
 EOF
+chmod 600 ~/.render/config.yaml
 ```
 
 Set the key in the current session:
@@ -334,6 +335,7 @@ cat > ~/.upstash/config << EOF
 email=<entered_email>
 api_key=<entered_key>
 EOF
+chmod 600 ~/.upstash/config
 ```
 
 **Verify:**
