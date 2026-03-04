@@ -223,22 +223,3 @@ Next push to main will trigger deployment automatically.
   python3 -c "import yaml; yaml.safe_load(open('.github/workflows/deploy-frontend.yml'))"
   ```
 - **Push fails:** Run `gh auth setup-git` to configure git credentials via gh
-
-## Logging
-
-When this skill finishes (success or failure), append to `DEPLOYMENT_DOCS/DEPLOYMENT_LOG.md`:
-
-```
-## setup-cicd — [current date and time]
-**Status:** ✅ Complete | ❌ Failed | ⚠️ Partial
-
-**Workflows generated:**
-- deploy-frontend.yml: [yes (Vercel) / yes (Netlify) / no]
-- deploy-backend.yml: [yes (Render) / no]
-- health-check.yml: [yes / no]
-
-**GitHub Secrets set:** [list of secret NAMES — no values]
-**Committed and pushed:** [yes / no]
-
-**Error (if any):** [error message or "none"]
-```

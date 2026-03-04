@@ -126,20 +126,3 @@ See [references/api_reference.md](references/api_reference.md) for the full API 
 | List env vars | GET | `/v10/projects/{id}/env?teamId=` |
 | Update project | PATCH | `/v9/projects/{id}?teamId=` |
 | Delete project | DELETE | `/v9/projects/{id}?teamId=` |
-
-## Logging
-
-When this skill finishes (success or failure), append to `DEPLOYMENT_DOCS/DEPLOYMENT_LOG.md`:
-
-```
-## deploy-vercel — [current date and time]
-**Status:** ✅ Live | ❌ Failed
-
-**Project name:** [name used]
-**Production URL:** [https://... or "not obtained"]
-**Framework detected:** [framework or "static"]
-**Env vars injected:** [list of variable NAMES set — no values]
-**GitHub connected:** [yes / no]
-
-**Error (if any):** [error message or "none"]
-```

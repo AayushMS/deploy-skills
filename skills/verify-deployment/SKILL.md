@@ -129,23 +129,3 @@ If any check FAILS:
    - **DB fails:** "Check Supabase/Neon dashboard — project may have paused"
 3. Ask the user: `"Would you like me to re-run verification after you've checked? (yes/no)"`
 4. **Do NOT claim the deployment is successful if any check fails.**
-
-## Logging
-
-When this skill finishes (success or failure), append to `DEPLOYMENT_DOCS/DEPLOYMENT_LOG.md`:
-
-```
-## verify-deployment — [current date and time]
-**Status:** ✅ All passing | ❌ Some failed | ⚠️ Partial
-
-**Health checks:**
-- Frontend URL: [URL] → [✅ 2xx / ❌ failed / ⚠️ timeout]
-- Backend /health: [URL] → [✅ 2xx / ❌ failed / ⚠️ not found]
-- Backend /api/health/db: [URL] → [✅ 2xx / ❌ failed / ⚠️ skipped]
-- agent-browser render: [✅ page rendered / ❌ blank/error / ⚠️ skipped]
-- Cross-service test: [✅ passed / ❌ failed / ⚠️ skipped]
-
-**Screenshot saved:** DEPLOYMENT_DOCS/verify-frontend.png [yes / no]
-
-**Error (if any):** [error message or "none"]
-```
