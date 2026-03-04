@@ -133,3 +133,19 @@ Export: `CF_URL` for CI/CD setup and env var wiring.
 - Pages deploy fails: verify the output directory exists and has an `index.html`
 - Workers deploy fails: check `wrangler.toml` syntax, verify `main` file exists
 - API env var set fails: verify ACCOUNT_ID and CF_TOKEN are correct
+
+## Logging
+
+When this skill finishes (success or failure), append to `DEPLOYMENT_DOCS/DEPLOYMENT_LOG.md`:
+
+```
+## deploy-cloudflare — [current date and time]
+**Status:** ✅ Live | ❌ Failed
+
+**Mode:** [Pages / Workers]
+**Project/worker name:** [name used]
+**URL:** [https://... or "not obtained"]
+**Env vars injected:** [list of variable NAMES set — no values]
+
+**Error (if any):** [error message or "none"]
+```

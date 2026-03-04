@@ -128,3 +128,21 @@ If the deploy fails:
    - Build command fails → check the buildCommand in Render dashboard
    - Start command fails → check PORT env var (must use process.env.PORT, default 10000)
    - Environment variable missing → set via Render dashboard or re-run with correct vars
+
+## Logging
+
+When this skill finishes (success or failure), append to `DEPLOYMENT_DOCS/DEPLOYMENT_LOG.md`:
+
+```
+## deploy-render — [current date and time]
+**Status:** ✅ Live | ❌ Failed | ⏳ Timed out polling
+
+**Service name:** [name used]
+**Service URL:** [https://... or "not obtained"]
+**Environment:** [region, plan: free]
+**Env vars injected:** [list of variable NAMES set, e.g. DATABASE_URL, REDIS_URL — no values]
+**Health check:** [passed / failed / skipped]
+**Poll duration:** [~N minutes to go live]
+
+**Error (if any):** [error message or "none"]
+```

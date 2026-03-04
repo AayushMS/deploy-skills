@@ -113,3 +113,22 @@ Pass these to deploy-render or deploy-railway as env vars.
 - Project creation fails: check org-id is correct, verify you haven't hit the 2-project limit
 - Migrations fail: check the SQL for compatibility, run `supabase db diff` locally first
 - Status command returns empty: wait 30-60 seconds for project provisioning to complete
+
+## Logging
+
+When this skill finishes (success or failure), append to `DEPLOYMENT_DOCS/DEPLOYMENT_LOG.md`:
+
+```
+## deploy-supabase — [current date and time]
+**Status:** ✅ Live | ❌ Failed
+
+**Project name:** [name used]
+**Region:** [region chosen]
+**Migrations run:** [supabase migrate / prisma migrate / none]
+**Env vars captured:** SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, DATABASE_URL [or list which ones failed]
+**Saved to:** DEPLOYMENT_DOCS/DEPLOYED_ENV.md (chmod 600)
+
+**Warning:** Free tier pauses after 7 days inactivity.
+
+**Error (if any):** [error message or "none"]
+```

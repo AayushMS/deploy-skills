@@ -249,3 +249,46 @@ Install deploy-skills:
 3. **Never claim success without verification** — Step 7 must pass before printing "DEPLOYMENT COMPLETE"
 4. **Env var wiring is automatic** — the user should never need to manually copy URLs between services
 5. **One-shot means one-shot** — from "deploy my project" to working URLs with no manual steps in between (only authentication in Step 2 requires user action)
+
+## Logging
+
+At the START of deploy-project, before Step 1, create `DEPLOYMENT_DOCS/DEPLOYMENT_LOG.md` with this header (create DEPLOYMENT_DOCS/ dir if needed):
+
+```
+# Deployment Log
+**Project:** [project directory name]
+**Started:** [current date and time]
+**Orchestrator:** deploy-project v0.1.0
+
+---
+
+```
+
+Then, after ALL steps complete (or on final failure), append this footer:
+
+```
+---
+
+## deploy-project — Final Summary — [current date and time]
+**Overall status:** ✅ Deployment complete | ❌ Deployment failed at step [N: name]
+
+**Steps completed:**
+- [✅/❌] Step 1: scan-project
+- [✅/❌] Step 2: setup-auth
+- [✅/❌] Step 3: gh-repo-setup
+- [✅/❌] Step 4a: database deployment
+- [✅/❌] Step 4b: redis/queues deployment
+- [✅/❌] Step 4c: backend deployment
+- [✅/❌] Step 4d: frontend deployment
+- [✅/❌] Step 5: save DEPLOYED_ENV.md
+- [✅/❌] Step 6: setup-cicd
+- [✅/❌] Step 7: verify-deployment
+
+**Deployed URLs:**
+- Frontend: [URL or "not deployed"]
+- Backend: [URL or "not deployed"]
+- Database: [platform + project name or "not deployed"]
+- Redis: [platform + db name or "not deployed"]
+
+**Stopped at:** [step name and reason, or "completed successfully"]
+```

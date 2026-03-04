@@ -194,3 +194,28 @@ No project structure detected. I checked for:
 
 Please confirm the project directory or point me to the relevant files.
 ```
+
+## Logging
+
+When this skill finishes (success, failure, or paused for user), append to `DEPLOYMENT_DOCS/DEPLOYMENT_LOG.md`:
+
+```
+## scan-project — [current date and time]
+**Status:** ✅ Complete | ❌ Failed | ⏸️ Paused for user approval
+
+**Detected services:**
+- Frontend: [framework → recommended platform, or "none"]
+- Backend: [framework → recommended platform, or "none"]
+- Database: [type → recommended platform, or "none"]
+- Redis/Queues: [yes → Upstash, or "none"]
+- Workers/Jobs: [yes/no]
+- Monorepo: [yes (tool) / no]
+
+**Files written:** [list which of HOW_TO_RUN.md / SERVICES.md / DEPLOYMENT_PLAN.md were written, or "none — project structure not detected"]
+
+**User decision:** [Approved as-is | Requested changes: brief summary | No response yet]
+
+**Notes:** [anything unexpected, e.g. ambiguous framework detection, missing .env.example]
+
+**Error (if any):** [error message or "none"]
+```
