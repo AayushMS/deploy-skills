@@ -5,8 +5,6 @@ description: Use this skill when the user asks to "scan my project", "analyze my
 
 # scan-project
 
-> **Reference:** Read `references/detection-signals.md` for the full framework detection signals table before starting. Use it to classify services and choose platforms.
-
 Scan the user's project codebase to detect all services, classify them, recommend free deployment platforms, and write three documentation files.
 
 ## Step 1: Read Project Files (silently, do not prompt the user)

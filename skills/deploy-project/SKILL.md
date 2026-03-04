@@ -5,8 +5,6 @@ description: Use this skill when the user asks to "deploy my project", "deploy e
 
 # deploy-project — One-Shot Deployment Orchestrator
 
-> **Reference:** Read `references/platforms.md` for platform free tier limits, env var wiring map, and deployment order. Load it now before proceeding.
-
 This skill deploys your entire project to free cloud infrastructure in one run.
 
 **Upfront announcement:**
