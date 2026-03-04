@@ -1,17 +1,21 @@
 {
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "deploy-skills",
+  "description": "One-shot deployment of any project to free cloud infrastructure",
   "owner": {
     "name": "AayushMS"
-  },
-  "metadata": {
-    "description": "One-shot deployment of any project to free cloud infrastructure",
-    "version": "0.1.0"
   },
   "plugins": [
     {
       "name": "deploy-skills",
       "description": "One-shot deployment of any project to free cloud infrastructure. Scans your codebase, authenticates required tools, deploys every service, wires environment variables, sets up CI/CD, and verifies everything is live.",
+      "version": "0.1.0",
+      "author": {
+        "name": "AayushMS"
+      },
       "source": "./",
+      "category": "deployment",
+      "homepage": "https://github.com/AayushMS/deploy-skills",
       "strict": false,
       "skills": [
         "./skills/scan-project",
@@ -29,5 +33,6 @@
         "./skills/deploy-log"
       ]
     }
-  ]
+  ],
+  "version": "0.1.0"
 }
