@@ -15,23 +15,7 @@
       },
       "source": "./",
       "category": "deployment",
-      "homepage": "https://github.com/AayushMS/deploy-skills",
-      "strict": false,
-      "skills": [
-        "./skills/scan-project",
-        "./skills/setup-auth",
-        "./skills/deploy-vercel",
-        "./skills/deploy-netlify",
-        "./skills/deploy-cloudflare",
-        "./skills/deploy-render",
-        "./skills/deploy-supabase",
-        "./skills/deploy-neon",
-        "./skills/deploy-upstash",
-        "./skills/setup-cicd",
-        "./skills/verify-deployment",
-        "./skills/deploy-project",
-        "./skills/deploy-log"
-      ]
+      "homepage": "https://github.com/AayushMS/deploy-skills"
     }
   ],
   "version": "0.1.0"
