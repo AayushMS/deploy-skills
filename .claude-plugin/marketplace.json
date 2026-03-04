@@ -25,7 +25,8 @@
         "./skills/deploy-upstash",
         "./skills/setup-cicd",
         "./skills/verify-deployment",
-        "./skills/deploy-project"
+        "./skills/deploy-project",
+        "./skills/deploy-log"
       ]
     }
   ]
