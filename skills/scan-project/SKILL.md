@@ -61,7 +61,7 @@ Apply these detection rules to everything read in Step 1.
 
 | Signal | Database | Recommended Platform |
 |--------|----------|---------------------|
-| `"pg"`, `"postgres"`, or `"prisma"` in deps AND `DATABASE_URL` in `.env.example` | PostgreSQL | Supabase (if project also needs auth or storage); Neon (if only DB needed) |
+| `"pg"`, `"postgres"`, or `"prisma"` in deps OR `DATABASE_URL` in `.env.example` (either signal is sufficient) | PostgreSQL | Supabase (if project also needs auth or storage); Neon (if only DB needed) |
 | `"mongoose"` or `"mongodb"` in deps | MongoDB | ⚠️ WARNING: No truly free hosted tier. Recommend Atlas M0 free cluster (512 MB). |
 | `"mysql"` or `"mysql2"` in deps | MySQL | ⚠️ WARNING: PlanetScale removed its free tier. Recommend Neon with MySQL compatibility layer or switch to PostgreSQL. |
 | `"better-sqlite3"` or `"sqlite3"` in deps | SQLite | Embed in backend process — no separate service needed |
