@@ -20,7 +20,44 @@ If either file is missing, halt:
 
 ---
 
-## Step 2: Create .github/workflows/ directory
+## Step 2: Check GitHub token has workflow scope
+
+Pushing `.github/workflows/` files requires the `workflow` scope. Check before proceeding:
+
+```bash
+gh auth status
+```
+
+Look for `workflow` in the token scopes. If it's missing:
+
+**Detect WSL2:**
+```bash
+grep -qi microsoft /proc/version 2>/dev/null && echo "WSL2" || echo "native"
+```
+
+**If WSL2 or workflow scope is missing — use a PAT instead of trying `gh auth refresh`:**
+
+Tell the user:
+```
+Your GitHub token is missing the "workflow" scope needed to push GitHub Actions files.
+gh auth refresh won't work in WSL2 due to browser limitations.
+
+Create a Personal Access Token instead:
+  1. Go to: https://github.com/settings/tokens/new
+  2. Select: "Classic token"
+  3. Check scopes: repo ✓  workflow ✓
+  4. Generate and paste the token here
+```
+
+Wait for the PAT, then use it for the push only:
+```bash
+GH_PAT="<pasted_token>"
+REPO_URL=$(gh repo view --json url -q .url | sed 's|https://||')
+git remote set-url origin "https://$GH_PAT@$REPO_URL"
+# (restore after push in step 6)
+```
+
+## Step 3: Create .github/workflows/ directory
 
 ```bash
 mkdir -p .github/workflows
@@ -28,7 +65,7 @@ mkdir -p .github/workflows
 
 ---
 
-## Step 3: Generate workflow files based on what's deployed
+## Step 4: Generate workflow files based on what's deployed
 
 ### deploy-frontend.yml — Vercel variant (if Vercel is in the plan)
 
@@ -141,7 +178,7 @@ jobs:
 
 ---
 
-## Step 4: Store secrets via `gh secret set`
+## Step 5: Store secrets via `gh secret set`
 
 Based on what's in `DEPLOYED_ENV.md`, set secrets for each platform that was deployed. Only set secrets for platforms actually used — skip platforms not listed in DEPLOYMENT_PLAN.md.
 
@@ -166,7 +203,7 @@ gh secret set RENDER_SERVICE_ID --body "$RENDER_SERVICE_ID"
 
 ---
 
-## Step 5: Replace placeholders in generated workflow files
+## Step 6: Replace placeholders in generated workflow files
 
 The `<frontend-dir>` and `<backend-dir>` placeholders in the workflow files need to be replaced with the actual paths detected by scan-project. Read `DEPLOYMENT_DOCS/SERVICES.md` to find the paths.
 
@@ -178,17 +215,21 @@ Use `sed` or direct file write to substitute the real paths into the generated Y
 
 ---
 
-## Step 6: Commit and push workflows
+## Step 7: Commit and push workflows
 
 ```bash
 git add .github/
 git commit -m "chore: add GitHub Actions CI/CD workflows"
 git push
+
+# If PAT was used for the remote URL, restore the clean HTTPS remote
+git remote set-url origin "https://github.com/$(gh repo view --json nameWithOwner -q .nameWithOwner).git"
+gh auth setup-git
 ```
 
 ---
 
-## Step 7: Verify secrets are set
+## Step 8: Verify secrets are set
 
 ```bash
 gh secret list

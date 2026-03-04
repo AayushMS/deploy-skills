@@ -21,6 +21,35 @@ From the project's `package.json`:
 
 ## Deployment Workflow
 
+### 0. Ensure root Dockerfile exists
+
+**Render ignores `dockerfilePath` and always builds from `./Dockerfile` at the repo root.** If the project's Dockerfile is in a subdirectory (e.g. `backend/Dockerfile`), create a root-level one:
+
+```bash
+if [ ! -f "Dockerfile" ]; then
+  # Detect subdirectory Dockerfile
+  SUBDIR_DOCKERFILE=$(find . -name "Dockerfile" -not -path "./.git/*" | head -1)
+  if [ -n "$SUBDIR_DOCKERFILE" ]; then
+    SUBDIR=$(dirname "$SUBDIR_DOCKERFILE" | sed 's|^\./||')
+    echo "Found Dockerfile at $SUBDIR_DOCKERFILE — creating root Dockerfile that builds from $SUBDIR/"
+    # Read the original and adapt COPY paths to account for build context being repo root
+    # Simplest approach: copy content and adjust COPY directives
+    echo "Creating root Dockerfile..."
+    # Write a root Dockerfile that copies the subdirectory and runs from it
+    cat > Dockerfile << EOF
+$(cat "$SUBDIR_DOCKERFILE" | sed "s|^COPY \.|COPY $SUBDIR|g")
+EOF
+    echo "⚠ Review Dockerfile — COPY paths may need adjustment for root build context"
+    echo "✓ Dockerfile created at repo root"
+  fi
+fi
+```
+
+If a Dockerfile was created, commit it before creating the Render service:
+```bash
+git add Dockerfile && git commit -m "chore: add root Dockerfile for Render deployment" && git push
+```
+
 ### 1. Get owner ID
 ```bash
 OWNER_ID=$(curl -s -H "Authorization: Bearer $RENDER_API_KEY" \
@@ -45,12 +74,11 @@ SERVICE_RESPONSE=$(curl -s -X POST https://api.render.com/v1/services \
     \"branch\": \"main\",
     \"buildCommand\": \"<detected build command>\",
     \"startCommand\": \"<detected start command>\",
-    \"plan\": \"free\",
-    \"envVars\": [
-      {\"key\": \"NODE_ENV\", \"value\": \"production\"},
-      {\"key\": \"PORT\", \"value\": \"10000\"}
-    ]
+    \"plan\": \"free\"
   }")
+
+# ⚠ Do NOT pass envVars in the creation payload — Render accepts them but does NOT persist them.
+# Env vars must be set via a separate PUT /env-vars call after the service is created (step 3).
 
 SERVICE_ID=$(echo $SERVICE_RESPONSE | python3 -c "import sys,json; print(json.load(sys.stdin)['service']['id'])")
 SERVICE_URL=$(echo $SERVICE_RESPONSE | python3 -c "import sys,json; print(json.load(sys.stdin)['service']['serviceDetails']['url'])")
@@ -58,18 +86,28 @@ echo "Service ID: $SERVICE_ID"
 echo "Service URL: $SERVICE_URL"
 ```
 
-### 3. Set environment variables (called after database is deployed)
+### 3. Set environment variables via dedicated API call
+
+**Always use this separate PUT call — never rely on the creation payload to persist env vars.**
+
 ```bash
-# Pass env vars as JSON array. Call this AFTER getting DATABASE_URL etc.
+# Build the env vars JSON array with all required variables
 curl -s -X PUT "https://api.render.com/v1/services/$SERVICE_ID/env-vars" \
   -H "Authorization: Bearer $RENDER_API_KEY" \
   -H "Content-Type: application/json" \
   -d '[
-    {"key": "DATABASE_URL", "value": "<from-supabase-or-neon>"},
-    {"key": "REDIS_URL", "value": "<from-upstash-if-needed>"}
+    {"key": "DATABASE_URL", "value": "'"$DATABASE_URL"'"},
+    {"key": "REDIS_URL", "value": "'"$REDIS_URL"'"}
   ]'
+
+# Verify env vars were actually saved
+SAVED=$(curl -s -H "Authorization: Bearer $RENDER_API_KEY" \
+  "https://api.render.com/v1/services/$SERVICE_ID/env-vars" \
+  | python3 -c "import sys,json; vs=json.load(sys.stdin); print([v['key'] for v in vs])")
+echo "Env vars saved: $SAVED"
 ```
-Replace with actual values from previous deploy steps.
+
+If `DATABASE_URL` or other required vars are missing from the saved list, re-run the PUT call before triggering a deploy.
 
 ### 4. Poll until live (up to 10 minutes)
 ```bash
@@ -121,10 +159,26 @@ Note these values — the deploy-project orchestrator uses them when setting up 
 ⚠️ Free tier: 750 hours/month (enough for one always-on service if requests keep it warm).
 
 ## On Failure
-If the deploy fails:
-1. Print the deploy status and SERVICE_ID
-2. Tell the user: "Check logs at https://dashboard.render.com/web/$SERVICE_ID/logs"
-3. Common issues:
-   - Build command fails → check the buildCommand in Render dashboard
-   - Start command fails → check PORT env var (must use process.env.PORT, default 10000)
-   - Environment variable missing → set via Render dashboard or re-run with correct vars
+
+**Do NOT use the Render `/v1/logs` API** — it returns runtime logs only, not build logs, and is unreliable for diagnosis.
+
+Instead, diagnose via deploy status + env var inspection:
+
+```bash
+# Check deploy status
+DEPLOY_STATUS=$(curl -s -H "Authorization: Bearer $RENDER_API_KEY" \
+  "https://api.render.com/v1/services/$SERVICE_ID/deploys?limit=1" \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); print(d[0]['deploy']['status'] if d else 'unknown')")
+echo "Status: $DEPLOY_STATUS"
+
+# Check saved env vars
+curl -s -H "Authorization: Bearer $RENDER_API_KEY" \
+  "https://api.render.com/v1/services/$SERVICE_ID/env-vars" \
+  | python3 -c "import sys,json; print([v['key'] for v in json.load(sys.stdin)])"
+```
+
+- `build_failed` → build command or Dockerfile issue → check dashboard build logs manually
+- `update_failed` → service crashed at startup → almost always a missing env var or wrong start command
+- Env var missing from the list → re-run the `PUT /env-vars` call and trigger a new deploy
+
+For build logs: `https://dashboard.render.com/web/$SERVICE_ID/deploys`

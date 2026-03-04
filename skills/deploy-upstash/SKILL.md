@@ -22,9 +22,12 @@ RESPONSE=$(curl -s -X POST https://api.upstash.com/v2/redis/database \
   -H "Content-Type: application/json" \
   -d "{
     \"name\": \"$DB_NAME\",
-    \"region\": \"us-east-1\",
+    \"region\": \"global\",
+    \"primary_region\": \"us-east-1\",
     \"tls\": true
   }")
+
+# Note: regional DB creation is deprecated. Always use "region":"global" with "primary_region".
 
 echo "Response: $RESPONSE"
 ```

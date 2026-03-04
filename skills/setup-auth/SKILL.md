@@ -200,18 +200,52 @@ The command must not error. An empty list is acceptable — it means you are log
 
 Check only if "Neon" appears in the Required Accounts section of DEPLOYMENT_PLAN.md.
 
-**Check:**
+**Check if CLI is installed:**
 ```bash
-neon me 2>/dev/null
+neonctl --version 2>/dev/null || neon --version 2>/dev/null
 ```
 
-**If the command fails:**
+If neither works, install it:
+```bash
+npm install -g neonctl
+```
+Note: the correct package is `neonctl` — NOT `neon` (which is an unrelated package).
+
+**Detect WSL2:**
+```bash
+grep -qi microsoft /proc/version 2>/dev/null && echo "WSL2" || echo "native"
+```
+
+**If WSL2 detected — skip browser auth entirely, go straight to API key:**
+
+Tell the user:
+```
+You're on WSL2 — the browser auth flow won't work here.
+
+Instead, generate an API key:
+  1. Go to: https://console.neon.tech/app/settings/api-keys
+  2. Create a new API key
+  3. Paste it here
+```
+
+Wait for the key, then:
+```bash
+export NEON_API_KEY="<pasted_key>"
+echo "export NEON_API_KEY=$NEON_API_KEY" >> ~/.bashrc
+```
+
+Verify:
+```bash
+neonctl me --api-key "$NEON_API_KEY"
+```
+
+**If NOT WSL2 — try browser auth:**
 
 Tell the user:
 ```
 Neon CLI is not authenticated. Please run this in a separate terminal:
 
-  neon auth
+  neonctl auth
 
 A browser window will open. Complete the login there, then come back here and confirm.
 ```
@@ -220,7 +254,7 @@ Wait for confirmation.
 
 **Verify:**
 ```bash
-neon me
+neonctl me
 ```
 
 The output must show an email address. If it fails, stop and explain the error.
@@ -313,17 +347,15 @@ Tell the user:
 ```
 Upstash uses an API key for CLI access.
 
-To get your credentials:
   1. Go to: https://console.upstash.com/account/api
-  2. Copy your Email address and API Key
+  2. You'll see your Email address and API Key on that page
 
-Please enter your Upstash email address:
+Please provide both:
+  Email: (your Upstash account email, e.g. you@example.com)
+  API Key: (the long UUID string shown on the API page)
 ```
 
-Wait for the email, then ask:
-```
-Now please enter your Upstash API key:
-```
+Wait for the user to provide **both** in one reply. If they only provide one, ask for the other explicitly before continuing.
 
 After receiving both, store them:
 ```bash

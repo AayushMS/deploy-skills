@@ -13,35 +13,61 @@ Neon provides serverless PostgreSQL. Use instead of Supabase when the project on
 - Branching support for dev/staging environments
 
 ## Prerequisites
-- neonctl CLI installed: `neon --version` (install: `npm install -g neonctl`)
-- Logged in: `neon me` (run setup-auth if not)
+- neonctl CLI installed: `neonctl --version` (install: `npm install -g neonctl`)
+- Logged in: `neonctl me` or `NEON_API_KEY` set (run setup-auth if not)
 
 ## Deployment Workflow
 
-### 1. Create Neon project
+### 1. Get org ID (required to avoid interactive prompt)
+
+`neonctl` will show an interactive org selector if `--org-id` is not passed. Always capture it first:
+
+```bash
+# If using API key auth:
+ORG_ID=$(neonctl orgs list --api-key "$NEON_API_KEY" --output json 2>/dev/null \
+  | python3 -c "import sys,json; orgs=json.load(sys.stdin); print(orgs[0]['id'] if orgs else '')" 2>/dev/null)
+
+# If using browser auth:
+ORG_ID=$(neonctl orgs list --output json 2>/dev/null \
+  | python3 -c "import sys,json; orgs=json.load(sys.stdin); print(orgs[0]['id'] if orgs else '')" 2>/dev/null)
+
+echo "Org ID: $ORG_ID"
+```
+
+If `ORG_ID` is empty, pass `--org-id` as an empty string or omit it — neonctl will use the personal account.
+
+### 2. Create Neon project
 ```bash
 PROJECT_NAME=$(basename $(pwd) | tr '[:upper:]' '[:lower:]' | tr '_' '-')
 
-neon projects create \
+# Always pass --org-id and --api-key (if set) to avoid interactive prompts
+neonctl projects create \
   --name "$PROJECT_NAME" \
-  --region-id aws-us-east-2
+  --region-id aws-us-east-1 \
+  ${ORG_ID:+--org-id "$ORG_ID"} \
+  ${NEON_API_KEY:+--api-key "$NEON_API_KEY"}
 
 echo "✓ Project created: $PROJECT_NAME"
 ```
 
-### 2. Get project ID and connection string
+### 3. Get project ID and connection string
 ```bash
-PROJECT_ID=$(neon projects list --output json | python3 -c "
+PROJECT_ID=$(neonctl projects list --output json \
+  ${ORG_ID:+--org-id "$ORG_ID"} \
+  ${NEON_API_KEY:+--api-key "$NEON_API_KEY"} \
+  | python3 -c "
 import sys,json
-projects = json.load(sys.stdin).get('projects', [])
+data = json.load(sys.stdin)
+projects = data.get('projects', data) if isinstance(data, dict) else data
 proj = next((p for p in projects if p['name'] == '$PROJECT_NAME'), None)
 if proj: print(proj['id'])
 ")
 
-DATABASE_URL=$(neon connection-string \
+DATABASE_URL=$(neonctl connection-string \
   --project-id "$PROJECT_ID" \
   --role-name neondb_owner \
-  --database-name neondb)
+  --database-name neondb \
+  ${NEON_API_KEY:+--api-key "$NEON_API_KEY"})
 
 echo "DATABASE_URL=$DATABASE_URL"
 ```
