@@ -62,6 +62,7 @@ on:
     branches: [main]
     paths:
       - '<frontend-dir>/**'
+      - '!DEPLOYMENT_DOCS/**'
 jobs:
   deploy:
     runs-on: ubuntu-latest

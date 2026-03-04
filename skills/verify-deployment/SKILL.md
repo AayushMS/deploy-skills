@@ -41,8 +41,8 @@ check_url() {
   return 1
 }
 
-# Frontend (1 attempt — no cold start)
-check_url "Frontend" "$FRONTEND_URL" 1
+# Frontend (2 attempts — no cold start)
+check_url "Frontend" "$FRONTEND_URL" 2
 
 # Backend health endpoint (3 attempts — Render free tier cold start ~30s)
 check_url "Backend /health" "$BACKEND_URL/health" 3

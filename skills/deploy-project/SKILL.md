@@ -103,6 +103,9 @@ If BullMQ, ioredis, or `REDIS_URL` was detected by scan-project:
 - Invoke `deploy-upstash` skill
 - Capture: `REDIS_URL`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`
 
+Verify: `REDIS_URL` is non-empty.
+If empty: stop. Report: "DEPLOYMENT PAUSED at Step 4b: Redis/Upstash deployment failed. Check errors above."
+
 ### 4c. Backend (if in plan)
 
 Before deploying backend, inject env vars from 4a and 4b into the deploy command:
