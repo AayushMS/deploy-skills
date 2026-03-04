@@ -24,6 +24,15 @@ This triggers `deploy-project` which sequentially:
 5. Sets up GitHub Actions CI/CD
 6. Verifies everything is live and communicating
 
+### Debug Mode
+
+To get a full step-by-step trace of everything the plugin does:
+```
+deploy my project with logging
+```
+
+This invokes `deploy-log` first, which writes every decision, command, and outcome to `DEPLOYMENT_DOCS/DEPLOYMENT_LOG.md` continuously throughout the session. Share that file to diagnose failures or review what happened.
+
 ## Platforms Supported
 
 | Service | Platform | Free Tier |
@@ -50,3 +59,4 @@ This triggers `deploy-project` which sequentially:
 | deploy-supabase | Database → Supabase | `deploy to Supabase` |
 | deploy-neon | Database → Neon | `deploy to Neon` |
 | deploy-upstash | Redis/Queues → Upstash | `set up Redis` |
+| deploy-log | Enable continuous debug logging for the session | `deploy my project with logging` |
