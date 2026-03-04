@@ -5,7 +5,7 @@ One-shot deployment of any project to free cloud infrastructure using Claude Cod
 ## Install
 
 ```
-/plugin marketplace add your-username/deploy-skills
+/plugin marketplace add AayushMS/deploy-skills
 /plugin install deploy-skills@deploy-skills
 ```
 
