@@ -1,0 +1,32 @@
+{
+  "name": "deploy-skills",
+  "owner": {
+    "name": "AayushMS"
+  },
+  "metadata": {
+    "description": "One-shot deployment of any project to free cloud infrastructure",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "deploy-skills",
+      "description": "One-shot deployment of any project to free cloud infrastructure. Scans your codebase, authenticates required tools, deploys every service, wires environment variables, sets up CI/CD, and verifies everything is live.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/scan-project",
+        "./skills/setup-auth",
+        "./skills/deploy-vercel",
+        "./skills/deploy-netlify",
+        "./skills/deploy-cloudflare",
+        "./skills/deploy-render",
+        "./skills/deploy-supabase",
+        "./skills/deploy-neon",
+        "./skills/deploy-upstash",
+        "./skills/setup-cicd",
+        "./skills/verify-deployment",
+        "./skills/deploy-project"
+      ]
+    }
+  ]
+}
