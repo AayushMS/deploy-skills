@@ -13,12 +13,6 @@ One-shot deployment of any project to free cloud infrastructure using Claude Cod
 
 ### OpenCode
 
-**Global (all projects):**
-```bash
-git clone https://github.com/AayushMS/deploy-skills.git ~/.config/opencode/plugins/deploy-skills
-```
-
-**Project-scoped (specific project only):**
 ```bash
 cp -r .opencode /your/project/
 ```
