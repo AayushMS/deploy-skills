@@ -62,7 +62,13 @@ export const DeploySkillsPlugin = async ({ client, directory }) => {
   const skillsDir = path.resolve(__dirname, '../../skills');
   const homeDir = os.homedir();
   const envConfigDir = process.env.OPENCODE_CONFIG_DIR;
-  const configDir = envConfigDir || path.join(homeDir, '.config/opencode');
+  const globalConfigDir = envConfigDir || path.join(homeDir, '.config/opencode');
+  
+  const pluginDir = path.resolve(__dirname, '../');
+  const projectRoot = path.resolve(pluginDir, '../..');
+  const isProjectScoped = !pluginDir.startsWith(globalConfigDir);
+  
+  const configDir = isProjectScoped ? projectRoot : globalConfigDir;
   
   const skills = getAllSkills(skillsDir);
   
@@ -73,6 +79,13 @@ export const DeploySkillsPlugin = async ({ client, directory }) => {
       `- **${s.name}**: ${s.description}`
     ).join('\n');
     
+    const installGlobal = `- For Claude Code: Use \`/plugin marketplace add AayushMS/deploy-skills\` → \`/plugin install deploy-skills@deploy-skills\`
+- For OpenCode (global): Clone to \`~/.config/opencode/plugins/deploy-skills/`
+- For OpenCode (project): Copy \`.opencode\` folder to your project root`;
+    
+    const installProject = `- For Claude Code: Use \`/plugin marketplace add AayushMS/deploy-skills\` → \`/plugin install deploy-skills@deploy-skills\`
+- For OpenCode: Copy \`.opencode\` folder to your project root`;
+    
     return `<EXTREMELY_IMPORTANT>
 You have access to deploy-skills plugin for deployment tasks.
 
@@ -80,12 +93,11 @@ You have access to deploy-skills plugin for deployment tasks.
 ${skillsList}
 
 **Skills location:**
-Deploy skills are in \`${configDir}/plugins/deploy-skills/skills/\`
+Deploy skills are in \`${configDir}/plugins/deploy-skills/skills/\` (${isProjectScoped ? 'project-scoped' : 'global'})
 Use OpenCode's native \`skill\` tool to load and use these deployment skills.
 
 **Installation:**
-- For Claude Code: Use \`/plugin marketplace add AayushMS/deploy-skills\` → \`/plugin install deploy-skills@deploy-skills\`
-- For OpenCode: Clone to \`~/.config/opencode/plugins/deploy-skills/`
+${isProjectScoped ? installProject : installGlobal}
 
 </EXTREMELY_IMPORTANT>`;
   };

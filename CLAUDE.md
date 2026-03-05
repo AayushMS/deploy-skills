@@ -10,9 +10,14 @@ Claude Code and OpenCode skills marketplace plugin — deploys any project to fr
 /plugin install deploy-skills@deploy-skills
 ```
 
-**OpenCode:**
+**OpenCode (global):**
 ```bash
 git clone https://github.com/AayushMS/deploy-skills.git ~/.config/opencode/plugins/deploy-skills
+```
+
+**OpenCode (project-scoped):**
+```bash
+cp -r .opencode /your/project/
 ```
 
 ## Critical

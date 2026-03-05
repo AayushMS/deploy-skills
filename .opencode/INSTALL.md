@@ -4,10 +4,18 @@ One-shot deployment of any project to free cloud infrastructure.
 
 ## Installation
 
-Clone this repository to your OpenCode plugins directory:
+### Global (all projects)
 
 ```bash
 git clone https://github.com/AayushMS/deploy-skills.git ~/.config/opencode/plugins/deploy-skills
+```
+
+### Project-scoped (specific project only)
+
+Copy the `.opencode` folder from this repository to your project root:
+
+```bash
+cp -r /path/to/deploy-skills/.opencode /your/project/
 ```
 
 Restart OpenCode to load the plugin.
