@@ -59,16 +59,26 @@ const getAllSkills = (skillsDir) => {
 };
 
 export const DeploySkillsPlugin = async ({ client, directory }) => {
-  const skillsDir = path.resolve(__dirname, '../../skills');
   const homeDir = os.homedir();
   const envConfigDir = process.env.OPENCODE_CONFIG_DIR;
   const globalConfigDir = envConfigDir || path.join(homeDir, '.config/opencode');
   
   const pluginDir = path.resolve(__dirname, '../');
-  const projectRoot = path.resolve(pluginDir, '../..');
   const isProjectScoped = !pluginDir.startsWith(globalConfigDir);
   
-  const configDir = isProjectScoped ? projectRoot : globalConfigDir;
+  let skillsDir;
+  if (isProjectScoped) {
+    skillsDir = path.resolve(pluginDir, '../skills');
+  } else {
+    skillsDir = path.resolve(__dirname, '../skills');
+    if (!fs.existsSync(skillsDir)) {
+      skillsDir = path.resolve(pluginDir, 'skills');
+    }
+  }
+  
+  const configDir = isProjectScoped 
+    ? path.resolve(pluginDir, '../..') 
+    : path.join(globalConfigDir, 'plugins/deploy-skills');
   
   const skills = getAllSkills(skillsDir);
   
