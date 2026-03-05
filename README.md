@@ -14,7 +14,8 @@ One-shot deployment of any project to free cloud infrastructure using Claude Cod
 ### OpenCode
 
 ```bash
-cp -r .opencode /your/project/
+git clone https://github.com/AayushMS/deploy-skills.git /tmp/deploy-skills
+cp -r /tmp/deploy-skills/.opencode /your/project/
 ```
 
 Then restart OpenCode.
