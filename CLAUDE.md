@@ -1,9 +1,24 @@
 # deploy-skills
 
-Claude Code skills marketplace plugin — deploys any project to free cloud infrastructure.
+Claude Code and OpenCode skills marketplace plugin — deploys any project to free cloud infrastructure.
 
-**Repo:** `AayushMS/deploy-skills`
-**Install:** `/plugin marketplace add AayushMS/deploy-skills` → `/plugin install deploy-skills@deploy-skills`
+## Installation
+
+**Claude Code:**
+```
+/plugin marketplace add AayushMS/deploy-skills
+/plugin install deploy-skills@deploy-skills
+```
+
+**OpenCode (global):**
+```bash
+git clone https://github.com/AayushMS/deploy-skills.git ~/.config/opencode/plugins/deploy-skills
+```
+
+**OpenCode (project-scoped):**
+```bash
+cp -r .opencode /your/project/
+```
 
 ## Critical
 

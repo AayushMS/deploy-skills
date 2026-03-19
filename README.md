@@ -1,13 +1,23 @@
 # deploy-skills
 
-One-shot deployment of any project to free cloud infrastructure using Claude Code.
+One-shot deployment of any project to free cloud infrastructure using Claude Code or OpenCode.
 
 ## Install
+
+### Claude Code
 
 ```
 /plugin marketplace add AayushMS/deploy-skills
 /plugin install deploy-skills@deploy-skills
 ```
+
+### OpenCode
+
+```bash
+git clone https://github.com/AayushMS/deploy-skills.git .
+```
+
+Then restart OpenCode.
 
 ## Usage
 
